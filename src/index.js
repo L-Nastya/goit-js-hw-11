@@ -1,4 +1,6 @@
 import Notiflix from 'notiflix';
+// import SimpleLightbox from "simplelightbox";
+import "simplelightbox/dist/simple-lightbox.min.css";
 import ApiService from './API';
 
 const form = document.querySelector("#search-form");
@@ -10,22 +12,49 @@ form.addEventListener("submit", searchQ);
 button.addEventListener("click", loadMore);
 
 const newApiService = new ApiService();
+// button.hidden = true;
 
-function searchQ(e) {
+async function searchQ(e) {
+  try {
     e.preventDefault()
-  newApiService.randomName = input.value;
-  newApiService.fetchPhotos().then(cardContainer)
-  newApiService.resetPage()
-      
+    clearForm()
+    newApiService.randomName = input.value;
+    await newApiService.resetPage()
+    const red = await newApiService.fetchPhotos()
+    cardContainer(red)
+ hjk()
+  } catch (error) {
+  console.log(error)
+  }
 }
-
-function cardContainer(list) {
-  if (newApiService.fetchPhotos.length === 0) {
+async function hjk(totalHits) {
+  const data = await newApiService.fetchPhotos()
+  // const totalPages = Math.ceil(data.totalHits / 40)
+  if (data.totalHits > 0)
+  {
+    Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
+  button.hidden = false
+} else {  
+Notiflix.Notify.info('Cogito ergo sum');
+  }
+   console.log(data.totalHits)
+ }
+ function loadMore() {
+    newApiService.fetchPhotos().then(cardContainer)
+  
+}
+function clearForm() {
+  gallery.innerHTML = "";
+}
+// const lightbox = new SimpleLightbox(".gallery div a", { captionsData: "alt", captionDelay: 250, });
+function cardContainer(data) {
+  if (data.length === 0 || newApiService.randomName === "") {
     Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.')
   } else {
-    const markup = list.map(({ webformatURL, tags, likes, views, comments, downloads }) => {
+    const markup = data.map(({ largeImageURL, webformatURL, tags, likes, views, comments, downloads }) => {
       return `<div class="photo-card">
-  <img class="photo" src="${webformatURL}" alt="${tags}" loading="lazy" />
+      <a href="${largeImageURL}">
+  <img class="photo" src="${webformatURL}" alt="${tags}" loading="lazy" /></a>
   <div class="info">
     <p class="info-item">
       <b>Likes</b>
@@ -40,22 +69,14 @@ function cardContainer(list) {
       ${comments}
     </p>
     <p class="info-item">
-      <b>Downloads</b>
+      <b>Downloads</b>s
       ${downloads}
     </p>
   </div>
 </div>`
-    })
+    }).join("")
  
-    gallery.innerHTML = markup.join("");
-    console.log(markup)
-  }
+    gallery.insertAdjacentHTML("beforeend", markup)
 }
-
-function loadMore() {
-  newApiService.fetchPhotos()
-  // newApiService.morePages()
 }
- 
-
-        
+   

@@ -7,19 +7,19 @@ export default class ApiService {
     }
     
     async fetchPhotos() {
-    const URL = `https://pixabay.com/api/?key=${API_KEY}&q=${this.randomName}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=1`;
+        console.log(this.page)
+    const URL = `https://pixabay.com/api/?key=${API_KEY}&q=${this.randomName}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${this.page}`;
         const response = await axios.get(URL);
         console.log(response)
-      const more =  this.morePages();
-        console.log(more)
+          this.morePages()
         return response.data.hits;
     
       
     };
- async morePages() {
+  morePages() {
         this.page += 1;
     }
-    resetPage() {
+   async resetPage() {
         this.page = 1;
     }
 }

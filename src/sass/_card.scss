@@ -1,7 +1,33 @@
-.photo-card {
+// .search-form{
+//     align-items: center;
+//     background-color: rgb(110, 176, 104);
+// }
+.gallery{
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    justify-items: center;
+    padding: 20px;
+    margin-left: - 30px;
+   
+}
+.photo-card {
+    box-sizing: border-box;
+    background-color: rgb(110, 176, 104);
+    margin-bottom: 20px;
+    width: calc(100% / 4 - 30px);
+    margin-left: 30px;
+    margin-bottom: 30px;
 }
 .photo{
-    width: 300px;
+    width: 347px;
+    height: 233px;
+}
+.info-item{
+    display: inline-grid;
+        justify-items: center;
+        margin-right: 8px;
+        padding: 8px;
+        font-weight: 200;
+        height: 85px;
+
 }
