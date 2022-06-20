@@ -1,82 +1,79 @@
 import Notiflix from 'notiflix';
 // import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
-import ApiService from './API';
-
+// import ApiService from './API';
+import axios from "axios";
 const form = document.querySelector("#search-form");
 const input = document.querySelector("input"); 
 const button = document.querySelector(".load-more")
 const gallery = document.querySelector(".gallery");
+const buttonS = document.querySelector("button")
+console.log(buttonS)
+let page = 0;
 
-form.addEventListener("submit", searchQ);
-button.addEventListener("click", loadMore);
 
-const newApiService = new ApiService();
-// button.hidden = true;
-
-async function searchQ(e) {
-  try {
-    e.preventDefault()
-    clearForm()
-    newApiService.randomName = input.value;
-    await newApiService.resetPage()
-    const red = await newApiService.fetchPhotos()
-    cardContainer(red)
- hjk()
-  } catch (error) {
-  console.log(error)
+const searchS = (e) => {
+  e.preventDefault()
+  if (page > 0) {
+    page = 0;
+    gallery.innerHTML = "";
   }
+   ghjk() 
+ 
 }
-async function hjk(totalHits) {
-  const data = await newApiService.fetchPhotos()
-  // const totalPages = Math.ceil(data.totalHits / 40)
-  if (data.totalHits > 0)
-  {
-    Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
-  button.hidden = false
-} else {  
-Notiflix.Notify.info('Cogito ergo sum');
-  }
-   console.log(data.totalHits)
- }
- function loadMore() {
-    newApiService.fetchPhotos().then(cardContainer)
+buttonS.addEventListener("click", searchS)
+button.addEventListener("click", load)
+
+     async function fetchPhotos (name)  {
+        // console.log(this.page)
+        page += 1
+        const URL = `https://pixabay.com/api/?key=28085560-20e71cd79b088a688c0cfa752&q=${name}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${page}`;
+        const response = await axios.get(URL);
+       console.log(response)
+       console.log(response.data.hits)
+       return response.data.hits
+       
+}
+function load () {
+  ghjk()
   
 }
-function clearForm() {
-  gallery.innerHTML = "";
+async function ghjk() {
+  try {
+    const tyuio = await fetchPhotos(input.value);
+    console.log(tyuio)
+    renderCard(tyuio)
+  } catch (error) {
+    console.log(error)
+
+  }
 }
-// const lightbox = new SimpleLightbox(".gallery div a", { captionsData: "alt", captionDelay: 250, });
-function cardContainer(data) {
-  if (data.length === 0 || newApiService.randomName === "") {
-    Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.')
-  } else {
-    const markup = data.map(({ largeImageURL, webformatURL, tags, likes, views, comments, downloads }) => {
-      return `<div class="photo-card">
-      <a href="${largeImageURL}">
-  <img class="photo" src="${webformatURL}" alt="${tags}" loading="lazy" /></a>
-  <div class="info">
+
+
+function renderCard(card) {
+  const markup = card.map((element) => 
+ `<div class="photo-card">
+   <img src="${element.webformatURL}" alt="${element.tags}" loading="lazy" />
+   <div class="info">
     <p class="info-item">
-      <b>Likes</b>
-      ${likes}
+      <b>Likes</b>${element.likes}
     </p>
-    <p class="info-item">
-      <b>Views</b>
-      ${views}
-    </p>
-    <p class="info-item">
-      <b>Comments</b>
-      ${comments}
-    </p>
-    <p class="info-item">
-      <b>Downloads</b>s
-      ${downloads}
-    </p>
-  </div>
-</div>`
-    }).join("")
- 
-    gallery.insertAdjacentHTML("beforeend", markup)
+     <p class="info-item">
+       <b>Views</b>${element.views}
+     </p>
+     <p class="info-item">
+       <b>Comments</b>${element.comments}
+     </p>
+     <p class="info-item">
+       <b>Downloads</b>${element.downloads}
+     </p>
+   </div>
+ </div>`
+).join("")
+  console.log(markup)
+  gallery.insertAdjacentHTML("beforeend", markup)
 }
-}
-   
+
+
+
+
