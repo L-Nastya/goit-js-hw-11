@@ -1,7 +1,6 @@
 import Notiflix from 'notiflix';
-import SimpleLightbox from "simplelightbox";
-import "simplelightbox/dist/simple-lightbox.min.css";
-// import ApiService from './API';
+// import SimpleLightbox from "simplelightbox";
+// import "simplelightbox/dist/simple-lightbox.min.css";
 import axios from "axios";
 const form = document.querySelector("#search-form");
 const input = document.querySelector("input"); 
@@ -27,25 +26,15 @@ form.addEventListener("submit", searchQ)
 loadBtn.addEventListener("click", loadMore)
 
      async function fetchPhotos (name)  {
-        // console.log(this.page)
         page += 1
         const URL = `https://pixabay.com/api/?key=28085560-20e71cd79b088a688c0cfa752&q=${name}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${page}`;
         const response = await axios.get(URL);
-      //  console.log(response)
-      //  console.log(response.data.hits)
        totalHits = response.data.totalHits
        return response.data.hits
        
 }
 function loadMore () {
   renderCard()
-  // const { height: cardHeight } = document
-  // .querySelector(".gallery")
-  // .firstElementChild.getBoundingClientRect();
-  // window.scrollBy({
-  //       top: cardHeight * 2,
-  //       behavior: 'smooth'
-  //   })
   
 }
 async function  renderCard() {
@@ -74,12 +63,12 @@ async function  renderCard() {
 function cardContainer(data) {
   if (data.length === 0 || input.value === "") {
     Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.') 
+    loadBtn.style.display = "none";
   } else {
      loadBtn.style.display = "block";
-    const markup = data.map(({ largeImageURL, webformatURL, tags, likes, views, comments, downloads }) => {
+    const markup = data.map(({  webformatURL, tags, likes, views, comments, downloads }) => {
       return `<div class="photo-card">
-      <a href="${largeImageURL}" class="photo_big">
-  <img class="photo" src="${webformatURL}" alt="${tags}" loading="lazy" /></a>
+  <img class="photo" src="${webformatURL}" alt="${tags}" loading="lazy" />
   <div class="info">
     <p class="info-item">
       <b>Likes</b>
