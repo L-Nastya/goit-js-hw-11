@@ -54,7 +54,8 @@ width: 100%;
 .load-more{
     margin: auto;
     margin-bottom: 20px;
-    display: none;
+    display:block;
+    visibility: hidden;
     background-color: aqua;
         border-radius: 2px;
         border: none;

@@ -13,13 +13,15 @@ let totalHits;
 
 
 const searchQ = (e) => {
-  e.preventDefault()
+  e.preventDefault();
+      loadBtn.style.visibility = "hidden"
   if (page > 0) {
     page = 0;
     gallery.innerHTML = "";
+ 
   } 
 
-    renderCard()
+  renderCard()
   totalHitsmessage()
 }
 form.addEventListener("submit", searchQ)
@@ -44,7 +46,9 @@ async function  renderCard() {
       const array = Math.ceil(totalHits / perPage);
     if (page === array) {
       loadBtn.style.display = "none";
-      Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
+      setTimeout(() => {
+    Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
+  }, 5000);
     }
   } catch (error) {
     console.log(error)
@@ -54,18 +58,18 @@ async function  renderCard() {
 
  async function totalHitsmessage() {
   const request = await fetchPhotos(input.value);
-  if (totalHits > 0) {
-   Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
-    }
+   if (totalHits > 0) {
+      loadBtn.style.visibility = "visible";
+     Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
     
+   } 
 }
 
 function cardContainer(data) {
   if (data.length === 0 || input.value === "") {
     Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.') 
-    loadBtn.style.display = "none";
+      loadBtn.style.visibility = "hidden"
   } else {
-     loadBtn.style.display = "block";
     const markup = data.map(({  webformatURL, tags, likes, views, comments, downloads }) => {
       return `<div class="photo-card">
   <img class="photo" src="${webformatURL}" alt="${tags}" loading="lazy" />
