@@ -1,54 +1,43 @@
 import Notiflix from 'notiflix';
 // import SimpleLightbox from "simplelightbox";
 // import "simplelightbox/dist/simple-lightbox.min.css";
-import axios from "axios";
+import ApiService from './api';
 const form = document.querySelector("#search-form");
 const input = document.querySelector("input"); 
 const loadBtn = document.querySelector(".load-more")
 const gallery = document.querySelector(".gallery");
-
-let page = 0;
 let perPage = 40;
-let totalHits;
 
+const newApiService = new ApiService();
 
-const searchQ = (e) => {
+const searchQ = async (e) => {
   e.preventDefault();
-      loadBtn.style.visibility = "hidden"
-  if (page > 0) {
-    page = 0;
-    gallery.innerHTML = "";
- 
-  } 
-
+  loadBtn.style.visibility = "hidden"
+   gallery.innerHTML = "";
   renderCard()
   totalHitsmessage()
 }
 form.addEventListener("submit", searchQ)
 loadBtn.addEventListener("click", loadMore)
 
-     async function fetchPhotos (name)  {
-        page += 1
-        const URL = `https://pixabay.com/api/?key=28085560-20e71cd79b088a688c0cfa752&q=${name}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${page}`;
-        const response = await axios.get(URL);
-       totalHits = response.data.totalHits
-       return response.data.hits
+    
        
-}
 function loadMore () {
   renderCard()
   
 }
 async function  renderCard() {
   try {
-    const request = await fetchPhotos(input.value);
+    newApiService.randomName = input.value;
+    await newApiService.resetPage()
+    const request = await newApiService.fetchPhotos();
     cardContainer(request)
-      const array = Math.ceil(totalHits / perPage);
-    if (page === array) {
-      loadBtn.style.display = "none";
+      const array = Math.ceil(newApiService.totalHits / perPage);
+    if (newApiService.page === array) {
+       loadBtn.style.visibility = "hidden";
       setTimeout(() => {
     Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
-  }, 5000);
+  }, 32000);
     }
   } catch (error) {
     console.log(error)
@@ -56,12 +45,12 @@ async function  renderCard() {
   }
 }
 
- async function totalHitsmessage() {
-  const request = await fetchPhotos(input.value);
-   if (totalHits > 0) {
+async function totalHitsmessage() {
+   newApiService.randomName = input.value;
+  const request = await newApiService.fetchPhotos();
+   if (newApiService.totalHits > 0) {
       loadBtn.style.visibility = "visible";
-     Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
-    
+     Notiflix.Notify.success(`Hooray! We found ${newApiService.totalHits} images.`);
    } 
 }
 
